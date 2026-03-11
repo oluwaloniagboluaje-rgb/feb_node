@@ -99,7 +99,7 @@ app.get("/", (request, response) => {
   //   res.send(products)
 
   console.log(__dirname);
-  res.sendFile(__dirname + "/index.html");
+  response.sendFile(__dirname + "/index.html");
 });
 
 app.get('/index', (request, response)=>{
