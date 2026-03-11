@@ -36,7 +36,7 @@ const createUser = async (request, response) => {
         const token = await jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
             expiresIn: "5h",
         });
-        res.status(201).send({
+        response.status(201).send({
             message: "user created successfully",
             data: {
                 lastName,
@@ -58,11 +58,11 @@ const createUser = async (request, response) => {
         console.log(error);
 
         if (error.code == 11000) {
-            res.status(400).send({
+            AuthenticatorAttestationResponse.status(400).send({
                 message: "User already registered",
             });
         } else {
-            res.status(400).send({
+            response.status(400).send({
                 message: "User creation failed",
             });
         }
@@ -70,11 +70,11 @@ const createUser = async (request, response) => {
 };
 
 const login = async (request, response) => {
-    const { email, password } = req.body;
+    const { email, password } = request.body;
     try {
         const isUser = await UserModel.findOne({ email });
         if (!isUser) {
-            res.status(404).send({
+            response.status(404).send({
                 message: "Invalid credentials",
             });
 
@@ -111,9 +111,9 @@ const login = async (request, response) => {
     }
 };
 
-const editUser = async (req, res) => {
+const editUser = async (request, response) => {
     const { firstName, lastName } = req.body;
-    const { id } = req.params;
+    const { id } = request.params;
 
     try {
         let allowedUpdate = {
