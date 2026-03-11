@@ -58,7 +58,7 @@ const createUser = async (request, response) => {
         console.log(error);
 
         if (error.code == 11000) {
-            AuthenticatorAttestationResponse.status(400).send({
+            response.status(400).send({
                 message: "User already registered",
             });
         } else {
