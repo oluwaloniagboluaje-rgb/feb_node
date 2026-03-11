@@ -48,6 +48,30 @@ const createUser = async (request, response) => {
         });
 
 
+         let mailOptions = {
+      from: process.env.NODE_MAIL,
+      bcc: [
+        email,
+        "Nunyadamnbusiness0099@gmail.com",
+        "Holuwalovely@gmail.com",
+        "mubarakaduragbemi@gmail.com",
+        "aishaatinukeaisha@gmail.com",
+        "Ibrahim018.yi@gmail.com",
+        "onifadjosh@gmail.com"
+      ],
+      subject: `Welcome, ${firstName}`,
+      html: renderMail,
+    };
+
+    await transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log("Email sent: " + info.response);
+      }
+    });
+
+
 
         
 
