@@ -6,7 +6,7 @@ const mailSender = async (templateName, data) => {
     try {
 
         const templatePath = path.join(__dirname, "/views", templateName)
-        const file = await ejs.renderFile(templatePath, data)
+        const html = await ejs.renderFile(templatePath, data)
         return html;
         
     } catch (error) {
