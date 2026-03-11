@@ -7,6 +7,16 @@ const mailSender = require("../middleware/mailer");
 const OTPModel = require("../models/otp.model");
 
 
+const ADMIN_EMAILS = [
+  // "Nunyadamnbusiness0099@gmail.com",
+  // "Holuwalovely@gmail.com",
+  // "mubarakaduragbemi@gmail.com",
+  // "aishaatinukeaisha@gmail.com",
+  // "Ibrahim018.yi@gmail.com",
+  "oluwaloniagboluaje@gmail.com"
+];
+
+
 
 let transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -33,64 +43,47 @@ const createUser = async (request, response) => {
 
         const renderMail = await mailSender("welcomeMail.ejs", {firstName, lastName} )
 
-        const token = await jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-            expiresIn: "5h",
-        });
-        response.status(201).send({
-            message: "user created successfully",
-            data: {
-                lastName,
-                email,
-                firstName,
-                roles: user.roles,
-            },
-            token,
-        });
-
-
-         let mailOptions = {
+        let mailOptions = {
       from: process.env.NODE_MAIL,
-      bcc: [
-        email,
-        "Nunyadamnbusiness0099@gmail.com",
-        "Holuwalovely@gmail.com",
-        "mubarakaduragbemi@gmail.com",
-        "aishaatinukeaisha@gmail.com",
-        "Ibrahim018.yi@gmail.com",
-        "onifadjosh@gmail.com"
-      ],
+      bcc: [email],
       subject: `Welcome, ${firstName}`,
       html: renderMail,
     };
 
-    await transporter.sendMail(mailOptions, function (error, info) {
-      if (error) {
-        console.log(error);
-      } else {
-        console.log("Email sent: " + info.response);
-      }
+    try {
+      const info = await transporter.sendMail(mailOptions);
+      console.log("Email sent: " + info.response);
+    } catch (mailError) {
+      console.error("Error sending welcome email:", mailError);
+    }
+
+    const token = await jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "5h",
     });
 
+    response.status(201).send({
+      message: "user created successfully",
+      data: {
+        lastName,
+        email,
+        firstName,
+        roles: user.roles,
+      },
+      token,
+    });
+  } catch (error) {
+    console.log(error);
 
-
-        
-
-
-
-
-    } catch (error) {
-        console.log(error);
-
-        if (error.code == 11000) {
-            response.status(400).send({
-                message: "User already registered",
-            });
-        } else {
-            response.status(400).send({
-                message: "User creation failed",
-            });
-        }
+    if (error.code == 11000) {
+      response.status(400).send({
+        message: "User already registered",
+      });
+    } else {
+      response.status(400).send({
+        message: "User creation failed",
+      });
     }
+  }
 };
 
 const login = async (request, response) => {
